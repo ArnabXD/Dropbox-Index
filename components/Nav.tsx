@@ -12,7 +12,7 @@ export const Nav = () => {
       <Head>
         <title>{title}</title>
       </Head>
-      <nav className="px-6 py-3 border-b-2 border-cyan-500">
+      <nav className="px-6 py-3 border-b-2 border-cyan-500 backdrop-blur-3xl sticky top-0">
         <div className="flex flex-row justify-between items-center max-w-screen-md mx-auto">
           <Link href={"/"} passHref={true}>
             <a>
