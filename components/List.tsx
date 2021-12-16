@@ -58,8 +58,8 @@ export const List = (props: ListProps) => {
   return (
     <div className="container max-w-screen-md mx-auto my-2">
       <div className="grid grid-cols-12 p-4 mx-2 mt-2 bg-slate-800 border-b-2 border-b-slate-700">
-        <div className="col-span-9 md:col-span-10 font-bold">Name</div>
-        <div className="col-span-3 md:col-span-2 font-bold">Actions</div>
+        <div className="col-span-9 md:col-span-11 font-bold">Name</div>
+        <div className="col-span-3 md:col-span-1 font-bold">Actions</div>
       </div>
       <Toaster />
       {props.entries.map((file) => {
@@ -69,7 +69,7 @@ export const List = (props: ListProps) => {
             className="grid grid-cols-12 px-4 py-2 mx-2 bg-slate-800 hover:bg-slate-700"
           >
             <div
-              className="col-span-9 md:col-span-10 flex flex-row items-center"
+              className="col-span-9 md:col-span-11 flex flex-row items-center cursor-pointer"
               onClick={() => {
                 if (file[".tag"] === "folder") {
                   router.push(file.path_lower || "/");
@@ -87,7 +87,7 @@ export const List = (props: ListProps) => {
               )}
               <p className="mx-2 truncate">{file.name}</p>
             </div>
-            <div className="col-span-3 md:col-span-2 flex flex-row">
+            <div className="col-span-3 md:col-span-1 flex flex-row">
               <IconButton
                 onClick={() =>
                   toast.promise(
