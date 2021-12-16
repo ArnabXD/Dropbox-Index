@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useDisclosure } from "@chakra-ui/hooks";
-import { Search } from "./Icons";
+import { SearchIcon } from "@heroicons/react/solid";
 import Head from "next/head";
 
 export const Nav = () => {
@@ -29,12 +29,15 @@ export const Nav = () => {
                 className={"form-control h-10 p-2 w-full rounded-l-full"}
                 placeholder="Search"
               />
-              <Search className="bg-cyan-500 w-12 h-10 p-2" />
+              <SearchIcon className="bg-cyan-500 w-12 h-10 p-2" />
             </div>
           </div>
           {/* SM */}
           <div className="input-group overflow-hidden rounded-full md:hidden">
-            <Search className="bg-cyan-500 w-12 h-10 p-2" onClick={onToggle} />
+            <SearchIcon
+              className="bg-cyan-500 w-12 h-10 p-2"
+              onClick={onToggle}
+            />
           </div>
         </div>
         {isOpen && (

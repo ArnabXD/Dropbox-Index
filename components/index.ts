@@ -1,3 +1,3 @@
 export { Nav } from "./Nav";
-export { Clipboard, Download, Loading, Search } from "./Icons";
+export { Loading, IconButton } from "./Icons";
 export { List } from "./List";
