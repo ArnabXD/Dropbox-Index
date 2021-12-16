@@ -1,4 +1,4 @@
-# Next-DropBox-Index
+# DropBox-Index
 
 Index your dropbox files publically. Built with NextJS & Tailwind
 
