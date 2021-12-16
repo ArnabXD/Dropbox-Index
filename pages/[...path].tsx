@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import type { NextPage } from "next";
-import { Nav, Loading, List } from "../components";
 import ky from "ky";
 import { useQuery } from "react-query";
 import { DropboxResponse, files } from "dropbox";
 import { useRouter } from "next/router";
+import { Nav, Loading, List } from "../components";
 
 const Home: NextPage = () => {
-  const { query } = useRouter();
+  const router = useRouter();
   const [path, setPath] = useState("");
 
   useEffect(() => {
-    if (query.path) {
-      if (Array.isArray(query.path)) {
-        setPath(query.path.join("/"));
+    if (router.query.path) {
+      if (Array.isArray(router.query.path)) {
+        setPath(router.query.path.join("/"));
       } else {
-        setPath(query.path);
+        setPath(router.query.path);
       }
     }
-  }, [query]);
+  }, [router.query]);
 
   const { data, isLoading, isFetching, refetch } = useQuery(
     "path-" + path,

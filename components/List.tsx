@@ -44,9 +44,9 @@ export const List = (props: ListProps) => {
     data: files.FileMetadataReference | files.FolderMetadataReference
   ) => {
     if (data[".tag"] === "folder") {
-      setLink(window.location.origin + data.path_lower);
+      setLink(window.location.origin + data.path_display);
     } else {
-      let resp = await getDownloadLink(data.path_lower!);
+      let resp = await getDownloadLink(data.path_display!);
       if ("link" in resp.result) {
         setLink(resp.result.link);
       } else {
@@ -72,7 +72,7 @@ export const List = (props: ListProps) => {
               className="col-span-9 md:col-span-11 flex flex-row items-center cursor-pointer"
               onClick={() => {
                 if (file[".tag"] === "folder") {
-                  router.push(file.path_lower || "/");
+                  router.push(file.path_display || "/");
                 }
               }}
             >
@@ -113,7 +113,7 @@ export const List = (props: ListProps) => {
               {file[".tag"] === "file" && (
                 <IconButton
                   onClick={() => {
-                    getDownloadLink(file.path_lower!).then((resp) => {
+                    getDownloadLink(file.path_display!).then((resp) => {
                       if ("link" in resp.result) {
                         router.push(resp.result.link);
                       } else {
