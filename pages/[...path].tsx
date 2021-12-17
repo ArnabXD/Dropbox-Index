@@ -52,7 +52,7 @@ const Home: NextPage = () => {
       <Nav />
       <Breadcrumb path={path} />
       {(isLoading || isFetching) && <Loading />}
-      {data && <List entries={data} />}
+      {!(isLoading || isFetching) && data && <List entries={data} />}
     </div>
   );
 };
