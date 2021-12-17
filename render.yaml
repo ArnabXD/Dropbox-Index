@@ -6,4 +6,6 @@ services:
     startCommand: yarn start
     envVars:
       - key: DROPBOX_TOKEN
+        value: ''
       - key: NEXT_PUBLIC_TITLE
+        value: PublicBox
