@@ -3,8 +3,10 @@ name: NextJS Build Test
 on:
   push:
     branches-ignore: [gh-pages]
+    paths-ignore: ["*.md"]
   pull_request:
     branches-ignore: [gh-pages]
+    paths-ignore: ["*.md"]
 
 jobs:
   build:
