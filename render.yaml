@@ -2,6 +2,7 @@ services:
   - type: web
     name: dropbox-index
     env: node
+    plan: free
     buildCommand: yarn; yarn build
     startCommand: yarn start
     envVars:
