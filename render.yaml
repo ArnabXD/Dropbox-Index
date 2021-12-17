@@ -1,9 +1,9 @@
 services:
-- type: web
-  name: dropbox-index
-  env: node
-  buildCommand: yarn; yarn build
-  startCommand: yarn start
-  envVars:
-    - key: DROPBOX_TOKEN
-    - key: NEXT_PUBLIC_TITLE
+  - type: web
+    name: dropbox-index
+    env: node
+    buildCommand: yarn; yarn build
+    startCommand: yarn start
+    envVars:
+      - key: DROPBOX_TOKEN
+      - key: NEXT_PUBLIC_TITLE
