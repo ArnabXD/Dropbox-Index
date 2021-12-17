@@ -12,8 +12,7 @@ body {
 }
 
 .loadingScreen {
-  height: calc(100vh - 66px);
-  width: 100vw;
+  min-height: calc(100vh - 70px);
   @apply flex;
   @apply justify-center;
   @apply items-center;
