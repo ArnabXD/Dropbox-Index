@@ -1,6 +1,9 @@
+[![NextJS Build Test](https://github.com/ArnabXD/Dropbox-Index/actions/workflows/next-build.yml/badge.svg)](https://github.com/ArnabXD/Dropbox-Index/actions/workflows/next-build.yml)
+
 # DropBox-Index
 
 Index your dropbox files publically. Built with NextJS & Tailwind
+
 
 ## ENV Vars
 
