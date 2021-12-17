@@ -1,12 +1,10 @@
 import type { NextPage } from "next";
-import { Nav, Loading, List } from "../components";
+import { Nav, Loading, List, Breadcrumb } from "../components";
 import ky from "ky";
 import { useQuery } from "react-query";
 import { DropboxResponse, files } from "dropbox";
-import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
-  const router = useRouter();
   const { data, isLoading } = useQuery("home", async () => {
     const resp = await ky
       .get("/api/explore")
@@ -24,6 +22,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <Nav />
+      <Breadcrumb />
       {isLoading && <Loading />}
       {data && <List entries={data} />}
     </div>

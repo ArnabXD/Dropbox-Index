@@ -4,7 +4,7 @@ import ky from "ky";
 import { useQuery } from "react-query";
 import { DropboxResponse, files } from "dropbox";
 import { useRouter } from "next/router";
-import { Nav, Loading, List } from "../components";
+import { Nav, Loading, List, Breadcrumb } from "../components";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -42,6 +42,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (path) {
+      console.log(path);
       refetch();
     }
   }, [path, refetch]);
@@ -49,6 +50,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <Nav />
+      <Breadcrumb path={path} />
       {(isLoading || isFetching) && <Loading />}
       {data && <List entries={data} />}
     </div>
