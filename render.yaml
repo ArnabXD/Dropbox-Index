@@ -1,10 +1,9 @@
 services:
 - type: web
-  name: next-js
+  name: dropbox-index
   env: node
-  plan: starter
   buildCommand: yarn; yarn build
   startCommand: yarn start
   envVars:
-  - key: DROPBOX_TOKEN
-  - key: NEXT_PUBLIC_TITLE
+    - key: DROPBOX_TOKEN
+    - key: NEXT_PUBLIC_TITLE
