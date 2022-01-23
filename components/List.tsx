@@ -79,6 +79,14 @@ export const List = (props: ListProps) => {
               onClick={() => {
                 if (file[".tag"] === "folder") {
                   router.push(file.path_display || "/");
+                } else {
+                  getDownloadLink(file.path_display!).then((resp) => {
+                    if ("link" in resp.result) {
+                      router.push(resp.result.link);
+                    } else {
+                      toast.error("Failed to Download Generate Link");
+                    }
+                  });
                 }
               }}
             >
