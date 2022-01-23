@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 
 import { IconButton } from "./Icons";
 import ky from "ky";
+import prettyBytes from "pretty-bytes";
 
 interface ListProps {
   entries: (files.FileMetadataReference | files.FolderMetadataReference)[];
@@ -58,8 +59,13 @@ export const List = (props: ListProps) => {
   return (
     <div className="container max-w-screen-md mx-auto my-2">
       <div className="grid grid-cols-12 p-4 mx-2 mt-2 bg-slate-800 border-b-2 border-b-slate-700">
-        <div className="col-span-9 md:col-span-11 font-bold">Name</div>
-        <div className="col-span-3 md:col-span-1 font-bold">Actions</div>
+        <div className="col-span-9 font-bold">Name</div>
+        <div className="hidden md:flex md:col-span-2 flex-row font-bold justify-center">
+          Info
+        </div>
+        <div className="col-span-3 md:col-span-1 font-bold flex flex-row justify-center">
+          Actions
+        </div>
       </div>
       <Toaster />
       {props.entries.map((file) => {
@@ -69,7 +75,7 @@ export const List = (props: ListProps) => {
             className="grid grid-cols-12 px-4 py-2 mx-2 bg-slate-800 hover:bg-slate-700"
           >
             <div
-              className="col-span-9 md:col-span-11 flex flex-row items-center cursor-pointer"
+              className="col-span-9 md:col-span-9 flex flex-row items-center cursor-pointer"
               onClick={() => {
                 if (file[".tag"] === "folder") {
                   router.push(file.path_display || "/");
@@ -86,6 +92,9 @@ export const List = (props: ListProps) => {
                 <FolderIcon height={18} width={18} className="flex-shrink-0" />
               )}
               <p className="mx-2 truncate">{file.name}</p>
+            </div>
+            <div className="hidden md:flex md:col-span-2 flex-row items-center justify-center font-thin text-sm">
+              {file[".tag"] === "file" && prettyBytes(file.size)}
             </div>
             <div className="col-span-3 md:col-span-1 flex flex-row">
               <IconButton
