@@ -3,6 +3,8 @@
 Index your dropbox files publically. Built with NextJS & Tailwind
 
 [![NextJS Build Test](https://github.com/ArnabXD/Dropbox-Index/actions/workflows/next-build.yml/badge.svg)](https://github.com/ArnabXD/Dropbox-Index/actions/workflows/next-build.yml)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/ArnabXD/Dropbox-Index.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ArnabXD/Dropbox-Index/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ArnabXD/Dropbox-Index.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ArnabXD/Dropbox-Index/context:javascript)
 
 ## ENV Vars
 
