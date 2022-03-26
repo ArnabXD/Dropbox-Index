@@ -11,7 +11,7 @@
     "@chakra-ui/hooks": "^1.7.2",
     "@heroicons/react": "^1.0.5",
     "dropbox": "^10.23.0",
-    "ky": "^0.28.7",
+    "ky": "^0.30.0",
     "next": "^12.0.9",
     "pretty-bytes": "^6.0.0",
     "react": "17.0.2",
