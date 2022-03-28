@@ -38,27 +38,27 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@chakra-ui/hooks@^1.7.2":
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/hooks/-/hooks-1.7.2.tgz#64341c06b141cdc4c08ccab0308b46b20c11a99b"
-  integrity sha512-XJnya9ugAPYUedtQULKaLYBezE9cZMOkDm0MQl7FEuJKZ9ocHD6Pwpwf9Z03R91XQmcNL8gZ1NS0GT9v/xNl3Q==
+"@chakra-ui/hooks@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/hooks/-/hooks-1.9.0.tgz#1fe049e69267d34083fa045b911b30ca1ca7d7dc"
+  integrity sha512-fvhsObVxfQzAGaT5Vc4siwzoUVxueSK81MCHlU4FifANJQ+u/6c8PZkn9WRM0+WzWJHMAcYvp0y+A46y7TftFQ==
   dependencies:
-    "@chakra-ui/react-utils" "1.2.1"
-    "@chakra-ui/utils" "1.9.1"
+    "@chakra-ui/react-utils" "1.2.3"
+    "@chakra-ui/utils" "1.10.4"
     compute-scroll-into-view "1.0.14"
     copy-to-clipboard "3.3.1"
 
-"@chakra-ui/react-utils@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/react-utils/-/react-utils-1.2.1.tgz#e06c8987c63ceab3da3ddd53503bf45a893179a5"
-  integrity sha512-bV8FRaXiOgGxOg03iTNin/B02I+tHH9PQtqUTl3U7cJaoI+5AUYhrqXvl1Ya2/R7zxSFrb/gBVDTgbZiVkJ+Dg==
+"@chakra-ui/react-utils@1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/react-utils/-/react-utils-1.2.3.tgz#3356c9299bc8faada8fac6c5886ca65ec95bb5be"
+  integrity sha512-r8pUwCVVB7UPhb0AiRa9ZzSp4xkMz64yIeJ4O4aGy4WMw7TRH4j4QkbkE1YC9tQitrXrliOlvx4WWJR4VyiGpw==
   dependencies:
-    "@chakra-ui/utils" "^1.9.1"
+    "@chakra-ui/utils" "^1.10.4"
 
-"@chakra-ui/utils@1.9.1", "@chakra-ui/utils@^1.9.1":
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-1.9.1.tgz#e34bf74f9f6048da1ec2a5728db4cc80d0158e0e"
-  integrity sha512-Tue8JfpzOqeHd8vSqAnX1l/Y3Gg456+BXFP/TH6mCIeqMAMbrvv25vDskds0wlXRjMYdmpqHxCEzkalFrscGHA==
+"@chakra-ui/utils@1.10.4", "@chakra-ui/utils@^1.10.4":
+  version "1.10.4"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-1.10.4.tgz#40a32d4efd8684b2e7432a40b285796383eacfd3"
+  integrity sha512-AM91VQQxw8F4F1WDA28mqKY6NFIOuzc2Ekkna88imy2OiqqmYH0xkq8J16L2qj4cLiLozpYqba3C79pWioy6FA==
   dependencies:
     "@types/lodash.mergewith" "4.6.6"
     css-box-model "1.2.1"
