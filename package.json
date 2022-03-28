@@ -10,7 +10,7 @@
   "dependencies": {
     "@chakra-ui/hooks": "^1.7.2",
     "@heroicons/react": "^1.0.5",
-    "dropbox": "^10.23.0",
+    "dropbox": "^10.26.1",
     "ky": "^0.30.0",
     "next": "^12.0.9",
     "pretty-bytes": "^6.0.0",
