@@ -8,7 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/hooks": "^1.9.1",
+    "@chakra-ui/hooks": "^2.0.0",
     "@heroicons/react": "^1.0.6",
     "dropbox": "^10.29.0",
     "ky": "^0.30.0",
