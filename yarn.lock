@@ -17,13 +17,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@chakra-ui/hooks@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/hooks/-/hooks-2.0.0.tgz#ffc567b9decab43dd502e5906b3fd659cc560087"
-  integrity sha512-fEyjy1K2wskH6xPZRjBZBSwESZMQqz19iw/ajmMTqlroQZk1NlSh6MH8w8hNjiV+urKFOL5D6XTG+A7h1kPChA==
+"@chakra-ui/hooks@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/hooks/-/hooks-2.0.1.tgz#e69cc6390f1759ba1ddaee4772fbe5b76bf28bfb"
+  integrity sha512-z11Bci1SKbB5Hc0e1kI2mJR7InqmpiY5fTm4b0slbAB8y4bWiLekCYKP/ulEKcocObOQXWvumlGR7xoMO/GtEQ==
   dependencies:
     "@chakra-ui/react-utils" "2.0.0"
-    "@chakra-ui/utils" "2.0.0"
+    "@chakra-ui/utils" "2.0.1"
     compute-scroll-into-view "1.0.14"
     copy-to-clipboard "3.3.1"
 
@@ -34,10 +34,10 @@
   dependencies:
     "@chakra-ui/utils" "^2.0.0"
 
-"@chakra-ui/utils@2.0.0", "@chakra-ui/utils@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-2.0.0.tgz#1c66011b9de8443a198cff640aa2ee697b8c68ae"
-  integrity sha512-0ZZwnXiWJoDA6tOMBJuN9SOTNID4XBPvyW4FuyZjwkYu/6Hs3768YCu3z7Hn/YA9Rf63lMTipMlahdbvD2bOZg==
+"@chakra-ui/utils@2.0.1", "@chakra-ui/utils@^2.0.0":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-2.0.1.tgz#90b93bb352f31f0e59dfdec7f3f1815466bd762b"
+  integrity sha512-5yvIyzskfEi7nNWC0VR0T7KtOEZyy/5QwhbLZ/WD0zutV+SddLzmS7NnnnYvyuyT4SaNx/asKLerH2ucTz1pYA==
   dependencies:
     "@types/lodash.mergewith" "4.6.6"
     css-box-model "1.2.1"
