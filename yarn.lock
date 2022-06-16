@@ -648,10 +648,10 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
-dropbox@^10.30.0:
-  version "10.30.0"
-  resolved "https://registry.yarnpkg.com/dropbox/-/dropbox-10.30.0.tgz#6b2a5bdf3fac8475645ea2d6d19b86abb0a504d5"
-  integrity sha512-ah4mb4YoI7WwS0yXtDLKxbp9apXp5TfPksDuEvvgCYR1bpMmQKUFG9raNMLC2NsF4Dc/9Axxqj436ErPvg9HeQ==
+dropbox@^10.31.0:
+  version "10.31.0"
+  resolved "https://registry.yarnpkg.com/dropbox/-/dropbox-10.31.0.tgz#f321c659a75c96468f951a7db72988fed4b400a4"
+  integrity sha512-+Ujz4dl0OvLTbXgdewzGyf3BjvropOaluUhXgyatNWpg6istlfx+XGBZSlqSYbhqhTBp3g6VkF2bmd8V5f8bZw==
   dependencies:
     node-fetch "^2.6.1"
 
