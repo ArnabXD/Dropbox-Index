@@ -1,24 +1,38 @@
-name: NextJS Build Test
+name: CI
 
 on:
   push:
-    branches-ignore: [gh-pages]
-    paths-ignore: ["*.md"]
-  pull_request:
-    branches-ignore: [gh-pages]
-    paths-ignore: ["*.md"]
+    branches-ignore: ['gh-pages']
+    tags: ['*']
+  workflow_dispatch:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '#skip-lint')"
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - uses: actions/checkout@v3
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: "16"
           cache: yarn
-      - name: Install node_modules
+      - name: Install dependencies
         run: yarn install
-      - name: Build NextJS
-        run: yarn build
+      - name: Run Linter
+        run: yarn run lint
+
+  build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '#skip-build')"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install
+      - name: Build
+        run: yarn run build
