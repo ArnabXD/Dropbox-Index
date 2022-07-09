@@ -8,7 +8,9 @@ Index your dropbox files publically. Built with NextJS & Tailwind
 
 ## ENV Vars
 
-- `DROPBOX_TOKEN` : [How to?](https://telegra.ph/DropBox-Index-12-16)
+- `APP_ID` : Dropbox App Client ID
+- `APP_SECRET` : Dropbox App Client Secret
+- `REFRESH_TOKEN` : Dropbox refresh token
 - `NEXT_PUBLIC_TITLE` : Website title and Navbar heading
 
 ## Deploy
