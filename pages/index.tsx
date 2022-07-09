@@ -20,12 +20,12 @@ const Home: NextPage = () => {
   });
 
   return (
-    <div>
+    <>
       <Nav />
       <Breadcrumb />
       {isLoading && <Loading />}
       {data && <List entries={data} />}
-    </div>
+    </>
   );
 };
 

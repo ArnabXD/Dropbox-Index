@@ -48,12 +48,12 @@ const Home: NextPage = () => {
   }, [path, refetch]);
 
   return (
-    <div>
+    <>
       <Nav />
       <Breadcrumb path={path} />
       {(isLoading || isFetching) && <Loading />}
       {!(isLoading || isFetching) && data && <List entries={data} />}
-    </div>
+    </>
   );
 };
 
