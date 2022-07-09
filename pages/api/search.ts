@@ -9,8 +9,9 @@ const handler = async (
   res: NextApiResponse<FolderResponse>
 ) => {
   try {
+    const query = req.query.query as string;
     const resp = await dropbox.filesSearchV2({
-      query: req.query.query.toString(),
+      query,
     });
     res.json(resp);
   } catch (err) {
