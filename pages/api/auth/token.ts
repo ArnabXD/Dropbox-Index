@@ -11,7 +11,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       clientSecret: APP_SECRET,
     });
 
-    const redirectUri = `http://${req.headers.host}/api/auth/token`;
+    const redirectUri = req.headers.host?.includes("localhost")
+      ? `http://${req.headers.host}/api/auth/token`
+      : `https://${req.headers.host}/api/auth/token`;
     const code = req.query.code as string;
 
     const refreshToken = await dbx.getAccessTokenFromCode(redirectUri, code);
