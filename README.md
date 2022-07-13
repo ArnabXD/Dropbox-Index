@@ -17,4 +17,4 @@ Index your dropbox files publically. Built with NextJS & Tailwind
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FArnabXD%2FDropbox-Index&env=DROPBOX_TOKEN,NEXT_PUBLIC_TITLE)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FArnabXD%2FDropbox-Index&env=APP_ID,APP_SECRET,REFRESH_TOKEN,NEXT_PUBLIC_TITLE)

@@ -6,7 +6,11 @@ services:
     buildCommand: yarn; yarn build
     startCommand: yarn start
     envVars:
-      - key: DROPBOX_TOKEN
+      - key: APP_ID
+        value: ''
+      - key: APP_SECRET
+        value: ''
+      - key: REFRESH_TOKEN
         value: ''
       - key: NEXT_PUBLIC_TITLE
         value: PublicBox
