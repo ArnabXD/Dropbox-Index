@@ -20,7 +20,7 @@
     "react-query": "3.39.2"
   },
   "devDependencies": {
-    "@types/node": "16.11.43",
+    "@types/node": "16.18.42",
     "@types/react": "17.0.45",
     "autoprefixer": "10.4.8",
     "eslint": "8.22.0",
