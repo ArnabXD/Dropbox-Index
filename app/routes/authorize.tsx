@@ -5,7 +5,7 @@ import { DropboxService } from "~/services/dropbox";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
-    { title: data.title + " | " + data.error },
+    { title: `${data.title} | ${data.error}` },
     { name: "description", content: data.error_description },
   ];
 };
@@ -30,13 +30,13 @@ export const loader = async ({ context, request }: Route.LoaderArgs) => {
 
   if ("access_token" in token) {
     return redirect("/home");
-  } else {
-    return {
-      error: token.error,
-      error_description: token.error_description,
-      title: context.cloudflare.env.VITE_SITE_TITLE,
-    };
   }
+
+  return {
+    error: token.error,
+    error_description: token.error_description,
+    title: context.cloudflare.env.VITE_SITE_TITLE,
+  };
 };
 
 export default function Authorize({ loaderData }: Route.ComponentProps) {
