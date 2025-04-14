@@ -1,6 +1,20 @@
 import ky from "ky";
 import type { KyInstance, KyRequest } from "ky";
 
+interface DropboxAuthResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  scope: string;
+  uid: string;
+  account_id: string;
+}
+
+interface DropboxError {
+  error: string;
+  error_description: string;
+}
+
 export class DropboxService {
   private API_KEY: string;
   private API_SECRET: string;
@@ -33,7 +47,7 @@ export class DropboxService {
               if ("access_token" in newToken) {
                 request.headers.set(
                   "Authorization",
-                  `Bearer ${newToken.access_token}`,
+                  `Bearer ${newToken.access_token}`
                 );
               }
 
@@ -47,7 +61,7 @@ export class DropboxService {
 
   getAuthUrl = (redirectUri: string) => {
     const authorizationUrl = new URL(
-      "https://www.dropbox.com/oauth2/authorize",
+      "https://www.dropbox.com/oauth2/authorize"
     );
 
     authorizationUrl.searchParams.set("client_id", this.API_KEY);
@@ -74,20 +88,7 @@ export class DropboxService {
         body,
         throwHttpErrors: false,
       })
-      .json<
-        | {
-            access_token: string;
-            expires_in: number;
-            refresh_token: string;
-            scope: string;
-            uid: string;
-            account_id: string;
-          }
-        | {
-            error: string;
-            error_description: string;
-          }
-      >();
+      .json<DropboxAuthResponse | DropboxError>();
 
     if (!response || "error_description" in response) {
       console.debug(response);
@@ -133,20 +134,7 @@ export class DropboxService {
         body,
         throwHttpErrors: false,
       })
-      .json<
-        | {
-            access_token: string;
-            expires_in: number;
-            refresh_token: string;
-            scope: string;
-            uid: string;
-            account_id: string;
-          }
-        | {
-            error: string;
-            error_description: string;
-          }
-      >();
+      .json<DropboxAuthResponse | DropboxError>();
 
     if (!response || "error_description" in response) {
       console.debug(response);
