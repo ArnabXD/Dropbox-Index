@@ -33,7 +33,7 @@ export class DropboxService {
               if ("access_token" in newToken) {
                 request.headers.set(
                   "Authorization",
-                  `Bearer ${newToken.access_token}`
+                  `Bearer ${newToken.access_token}`,
                 );
               }
 
@@ -47,7 +47,7 @@ export class DropboxService {
 
   getAuthUrl = (redirectUri: string) => {
     const authorizationUrl = new URL(
-      "https://www.dropbox.com/oauth2/authorize"
+      "https://www.dropbox.com/oauth2/authorize",
     );
 
     authorizationUrl.searchParams.set("client_id", this.API_KEY);

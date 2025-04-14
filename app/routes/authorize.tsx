@@ -14,7 +14,7 @@ export const loader = async ({ context, request }: Route.LoaderArgs) => {
   const dropbox = new DropboxService(
     context.cloudflare.env.DROPBOX_APP_KEY,
     context.cloudflare.env.DROPBOX_APP_SECRET,
-    context.cloudflare.env.TOKEN
+    context.cloudflare.env.TOKEN,
   );
 
   const code = new URL(request.url).searchParams.get("code");
