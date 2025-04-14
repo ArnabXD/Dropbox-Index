@@ -1,10 +1,16 @@
 import type { Route } from "./+types/home";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ data }: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
+    { title: data.title },
     { name: "description", content: "Welcome to React Router!" },
   ];
+}
+
+export function loader({ context }: Route.LoaderArgs) {
+  return {
+    title: context.cloudflare.env.VITE_SITE_TITLE,
+  };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
