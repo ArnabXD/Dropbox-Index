@@ -104,7 +104,12 @@ export class DropboxService {
   getAccessToken = async () => {
     const token = await this.TOKEN_DB.get("ACCESS_TOKEN");
     if (!token) {
-      throw new Error("No access token found");
+      throw new Error("No access token found", {
+        cause: {
+          status: 401,
+          message: "No access token found",
+        },
+      });
     }
 
     return token;
