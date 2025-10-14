@@ -1,18 +1,47 @@
+import FolderIndex from "~/components/listPage";
 import type { Route } from "./+types/home";
 
-export function meta({ data }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
-    { title: data.title },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Drobox Indexer" },
+    { name: "description", content: "Welcome to Dropbox Indexer!" },
   ];
 }
 
-export function loader({ context }: Route.LoaderArgs) {
+type LoaderDataType = {
+  authUrl: string;
+  appKey: string;
+  appSecret: string;
+  refreshToken: string;
+};
+
+export function loader({ context }: Route.LoaderArgs): LoaderDataType {
   return {
-    title: context.cloudflare.env.VITE_SITE_TITLE,
+    appKey: context.cloudflare.env.APP_KEY,
+    appSecret: context.cloudflare.env.APP_SECRET,
+    authUrl: context.cloudflare.env.AUTH_URL,
+    refreshToken: context.cloudflare.env.REFRESH_TOKEN,
   };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return <h1>Hi</h1>;
+  return (
+    <div>
+      {!loaderData.refreshToken ? (
+        <section>
+          Go to this{" "}
+          <a
+            href={loaderData.authUrl}
+            className="text-blue-500
+        "
+          >
+            Link
+          </a>{" "}
+          to authorize your dropbox
+        </section>
+      ) : (
+        <section>{<FolderIndex />}</section>
+      )}
+    </div>
+  );
 }

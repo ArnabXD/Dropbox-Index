@@ -77,3 +77,18 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 ---
 
 Built with ❤️ using React Router.
+
+to deploy
+
+```
+npm i && npm run build && wrangler deploy
+```
+
+to upload env var for production
+
+```
+wrangler secret put APP_KEY --env production
+wrangler secret put APP_SECRET --env production
+wrangler secret put REFRESH_TOKEN --env production
+wrangler secret put AUTH_URL --env production
+```
