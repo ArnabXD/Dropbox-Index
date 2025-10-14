@@ -1,8 +1,7 @@
-import { Folder, File, Home, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import type { Entry, ListFolderResponseType } from "~/api/@types/types";
+import { Folder, File, Home, ChevronRight, ArrowUpDown } from "lucide-react";
+import { useState, useMemo } from "react";
+import type { Entry } from "~/api/@types/types";
 import { downloadFn, getAllFolderFn, getAccessTokenFn } from "~/api/api";
-// import type { Route } from "../+types/root";
 import { useQuery } from "@tanstack/react-query";
 import { useLoaderData } from "react-router";
 
@@ -30,6 +29,9 @@ export default function FolderIndex() {
   const loaderData = useLoaderData() as LoaderDataType;
   const [accessToken, setAccessToken] = useState("");
   const [folderPath, setFolderPath] = useState("");
+  const [sortBy, setSortBy] = useState<"name" | "size" | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
   const { data: entries, isLoading } = useQuery<Entry[]>({
     queryKey: ["entries", folderPath],
     queryFn: async () => {
@@ -64,20 +66,62 @@ export default function FolderIndex() {
     URL.revokeObjectURL(url);
   }
 
-  // const formatDate = (dateString: string) => {
-  //   return new Date(dateString).toLocaleDateString("en-US", {
-  //     year: "numeric",
-  //     month: "short",
-  //     day: "numeric",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //   });
-  // };
-
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
+  const sortedEntries = useMemo(() => {
+    if (!entries) return [];
+
+    if (sortBy === null) return entries;
+
+    const sorted = [...entries].sort((a, b) => {
+      let compareResult = 0;
+
+      if (sortBy === "name") {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        compareResult = nameA.localeCompare(nameB);
+      } else if (sortBy === "size") {
+        const sizeA = a[".tag"] === "file" ? a.size : 0;
+        const sizeB = b[".tag"] === "file" ? b.size : 0;
+        compareResult = sizeA - sizeB;
+      }
+
+      return sortOrder === "asc" ? compareResult : -compareResult;
+    });
+
+    return sorted;
+  }, [entries, sortBy, sortOrder]);
+
+  const handleSortByName = () => {
+    if (sortBy === "name") {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy("name");
+      setSortOrder("asc");
+    }
+  };
+
+  const handleSortBySize = () => {
+    if (sortBy === "size") {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy("size");
+      setSortOrder("asc");
+    }
+  };
+
+  const clearSort = () => {
+    setSortBy(null);
+    setSortOrder("asc");
+  };
+  const navigateFolder = (index: number, folderPath: string) => {
+    const paths = folderPath.slice(1).split("/");
+    const result = paths.slice(0, index + 1).join("/");
+    return "/" + result;
   };
 
   return (
@@ -95,14 +139,16 @@ export default function FolderIndex() {
           {folderPath && (
             <div className="flex items-center">
               {folderPath
+                .slice(1)
                 .split("/")
-                .filter((p) => p.length > 0)
                 .map((path, idx) => (
                   <div key={idx} className="flex items-center">
                     <ChevronRight className="w-4 h-4 text-gray-400 mx-1" />
                     <button
                       className="px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors font-medium"
-                      onClick={() => setFolderPath(`/${path}`)}
+                      onClick={() =>
+                        setFolderPath(navigateFolder(idx, folderPath))
+                      }
                     >
                       {path}
                     </button>
@@ -113,13 +159,58 @@ export default function FolderIndex() {
         </div>
 
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Files & Folders
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Browse and manage your files
-          </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Files & Folders
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              Browse your files
+            </p>
+          </div>
+
+          {/* Sort Button */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSortByName}
+              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors shadow-sm ${
+                sortBy === "name"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+              }`}
+              aria-label="Sort by name"
+            >
+              <ArrowUpDown className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                Name {sortBy === "name" && (sortOrder === "asc" ? "↑" : "↓")}
+              </span>
+            </button>
+
+            <button
+              onClick={handleSortBySize}
+              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors shadow-sm ${
+                sortBy === "size"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+              }`}
+              aria-label="Sort by size"
+            >
+              <ArrowUpDown className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                Size {sortBy === "size" && (sortOrder === "asc" ? "↑" : "↓")}
+              </span>
+            </button>
+
+            {sortBy !== null && (
+              <button
+                onClick={clearSort}
+                className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                aria-label="Clear sort"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
 
         {/* File List */}
@@ -146,7 +237,7 @@ export default function FolderIndex() {
             </div>
           )}
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
-            {entries?.map((entry) => (
+            {sortedEntries?.map((entry) => (
               <div
                 key={entry.id}
                 className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all cursor-pointer group"
@@ -174,9 +265,6 @@ export default function FolderIndex() {
                   <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {entry.name}
                   </h3>
-                  {/* <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-0.5"> */}
-                  {/*   {entry.path_display} */}
-                  {/* </p> */}
                 </div>
 
                 {/* Metadata */}
