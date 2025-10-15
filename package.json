@@ -6,7 +6,7 @@
     "build": "react-router build",
     "cf-typegen": "wrangler types",
     "deploy": "npm run build && wrangler deploy",
-    "dev": "react-router dev",
+    "dev": "react-router dev --host",
     "postinstall": "npm run cf-typegen",
     "preview": "npm run build && vite preview",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc -b"

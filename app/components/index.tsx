@@ -1,7 +1,12 @@
 import { Folder, File, Home, ChevronRight, ArrowUpDown } from "lucide-react";
 import { useState, useMemo } from "react";
 import type { Entry } from "~/api/@types/types";
-import { downloadFn, getAllFolderFn, getAccessTokenFn } from "~/api/api";
+import {
+  downloadFn,
+  getAllFolderFn,
+  getAccessTokenFn,
+  getAllFolderContinueFn,
+} from "~/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { useLoaderData } from "react-router";
 
@@ -25,12 +30,32 @@ type LoaderDataType = {
   refreshToken: string;
 };
 
-export default function FolderIndex() {
+export default function Index() {
   const loaderData = useLoaderData() as LoaderDataType;
   const [accessToken, setAccessToken] = useState("");
   const [folderPath, setFolderPath] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "size" | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  async function getFilesFolderRecursive(
+    has_more: boolean,
+    accessToken: string,
+    cursor: string,
+    entriesArray: Entry[],
+  ) {
+    if (has_more) {
+      const resp = await getAllFolderContinueFn(accessToken, cursor);
+      entriesArray.push(...resp.entries);
+      if (resp.has_more) {
+        await getFilesFolderRecursive(
+          resp.has_more,
+          accessToken,
+          resp.cursor,
+          entriesArray,
+        );
+      }
+    }
+  }
 
   const { data: entries, isLoading } = useQuery<Entry[]>({
     queryKey: ["entries", folderPath],
@@ -41,8 +66,16 @@ export default function FolderIndex() {
         loaderData.appSecret,
       );
       setAccessToken(newTokenResp.access_token);
+      const entriesArray: Entry[] = [];
       const resp = await getAllFolderFn(newTokenResp.access_token, folderPath);
-      return resp.entries;
+      entriesArray.push(...resp.entries);
+      await getFilesFolderRecursive(
+        resp.has_more,
+        newTokenResp.access_token,
+        resp.cursor,
+        entriesArray,
+      );
+      return entriesArray;
     },
     enabled: !!loaderData.refreshToken,
   });
@@ -131,7 +164,7 @@ export default function FolderIndex() {
         <div className="mb-6 flex items-center gap-2 text-sm bg-white dark:bg-gray-800 rounded-lg px-4 py-3 shadow-sm">
           <button
             onClick={() => setFolderPath("")}
-            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors cursor-pointer"
             aria-label="Go to home"
           >
             <Home className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -145,7 +178,7 @@ export default function FolderIndex() {
                   <div key={idx} className="flex items-center">
                     <ChevronRight className="w-4 h-4 text-gray-400 mx-1" />
                     <button
-                      className="px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors font-medium"
+                      className="px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors font-medium cursor-pointer"
                       onClick={() =>
                         setFolderPath(navigateFolder(idx, folderPath))
                       }
@@ -159,21 +192,23 @@ export default function FolderIndex() {
         </div>
 
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Files & Folders
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Browse your files
-            </p>
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                Files & Folders
+              </h1>
+              <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1">
+                Browse your files
+              </p>
+            </div>
           </div>
 
-          {/* Sort Button */}
-          <div className="flex items-center gap-2">
+          {/* Sort Buttons - Responsive Layout */}
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleSortByName}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors shadow-sm ${
+              className={`flex items-center gap-2 px-3 md:px-4 py-2 border rounded-lg transition-colors shadow-sm text-sm md:text-base cursor-pointer ${
                 sortBy === "name"
                   ? "bg-blue-600 text-white border-blue-600"
                   : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -181,14 +216,14 @@ export default function FolderIndex() {
               aria-label="Sort by name"
             >
               <ArrowUpDown className="w-4 h-4" />
-              <span className="text-sm font-medium">
+              <span className="font-medium">
                 Name {sortBy === "name" && (sortOrder === "asc" ? "↑" : "↓")}
               </span>
             </button>
 
             <button
               onClick={handleSortBySize}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors shadow-sm ${
+              className={`flex items-center gap-2 px-3 md:px-4 py-2 border rounded-lg transition-colors shadow-sm text-sm md:text-base cursor-pointer ${
                 sortBy === "size"
                   ? "bg-blue-600 text-white border-blue-600"
                   : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -196,7 +231,7 @@ export default function FolderIndex() {
               aria-label="Sort by size"
             >
               <ArrowUpDown className="w-4 h-4" />
-              <span className="text-sm font-medium">
+              <span className="font-medium">
                 Size {sortBy === "size" && (sortOrder === "asc" ? "↑" : "↓")}
               </span>
             </button>
@@ -204,7 +239,7 @@ export default function FolderIndex() {
             {sortBy !== null && (
               <button
                 onClick={clearSort}
-                className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors cursor-pointer"
                 aria-label="Clear sort"
               >
                 Clear

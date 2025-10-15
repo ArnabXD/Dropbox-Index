@@ -1,5 +1,5 @@
-import FolderIndex from "~/components/listPage";
 import type { Route } from "./+types/home";
+import Index from "~/components";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -40,7 +40,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           to authorize your dropbox
         </section>
       ) : (
-        <section>{<FolderIndex />}</section>
+        <section>{<Index />}</section>
       )}
     </div>
   );
