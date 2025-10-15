@@ -46,7 +46,7 @@ Your application will be available at `http://localhost:5173`.
 4. Voilà, There is your refresh token.
 5. Paste it into `.env_sample` and rename it to `.env`.
 
-## Deployment
+## Deployment to Cloudflare workers 
 
 Deployment is done using the Wrangler CLI.
 
@@ -59,9 +59,9 @@ npm i && npm run build && npx wrangler deploy
 - Upload Environment Variables for production same as `.env`
 
 ```
-wrangler secret put APP_KEY --env production
-wrangler secret put APP_SECRET --env production
-wrangler secret put REFRESH_TOKEN --env production
+npx wrangler secret put APP_KEY --env production
+npx wrangler secret put APP_SECRET --env production
+npx wrangler secret put REFRESH_TOKEN --env production
 ```
 
 Built with ❤️ using React Router.
