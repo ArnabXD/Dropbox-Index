@@ -19,7 +19,6 @@
         "REFRESH_TOKEN": "$REFRESH_TOKEN",
         "AUTH_KEY": "$AUTH_KEY",
         "AUTH_SECRET": "$AUTH_SECRET",
-        "AUTH_URL": "$AUTH_URL"
       }
     }
   }

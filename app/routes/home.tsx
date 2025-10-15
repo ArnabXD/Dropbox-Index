@@ -31,7 +31,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         <section>
           Go to this{" "}
           <a
-            href={loaderData.authUrl}
+            href={
+              "https://www.dropbox.com/oauth2/authorize?client_id=qy1yfn7mclvybv9&response_type=code&token_access_type=offline"
+            }
             className="text-blue-500
         "
           >
