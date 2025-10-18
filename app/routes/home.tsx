@@ -9,7 +9,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 type LoaderDataType = {
-  authUrl: string;
   appKey: string;
   appSecret: string;
   refreshToken: string;
@@ -19,7 +18,6 @@ export function loader({ context }: Route.LoaderArgs): LoaderDataType {
   return {
     appKey: context.cloudflare.env.APP_KEY,
     appSecret: context.cloudflare.env.APP_SECRET,
-    authUrl: context.cloudflare.env.AUTH_URL,
     refreshToken: context.cloudflare.env.REFRESH_TOKEN,
   };
 }
