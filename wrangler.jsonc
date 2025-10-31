@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dropbox-index",
+  "compatibility_date": "2025-04-04",
+  "main": "./workers/app.ts",
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "env": {
+    "production": {
+      "name": "dropbox-index",
+      "vars": {
+        "ENVIRONMENT": "production"
+      }
+    },
+    "development": {
+      "vars": {
+        "ENVIRONMENT": "development",
+        "REFRESH_TOKEN": "$REFRESH_TOKEN",
+        "AUTH_KEY": "$AUTH_KEY",
+        "AUTH_SECRET": "$AUTH_SECRET",
+      }
+    }
+  }
+}
