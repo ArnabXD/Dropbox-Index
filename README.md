@@ -1,6 +1,6 @@
-# Welcome to React Router!
+# DropBox-Index
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Index your dropbox files publically. Built using React Router
 
 ## Features
 
@@ -32,48 +32,37 @@ npm run dev
 
 Your application will be available at `http://localhost:5173`.
 
-## Previewing the Production Build
+### Environment Variables
 
-Preview the production build locally:
+- APP_KEY(already provided)
+- APP_SECRET(already provided)
+- **REFRESH_TOKEN** (required) follow the below steps to get it
 
-```bash
-npm run preview
-```
+#### Get Refresh Token:
 
-## Building for Production
+1. Go to this [URL](https://www.dropbox.com/oauth2/authorize?client_id=qy1yfn7mclvybv9&response_type=code&token_access_type=offline)
+2. Click `Continue` -> `Allow` -> Copy the code.
+3. Then run `node getRefreshToken.js` and then paste the code you got.
+4. Voilà, There is your refresh token.
+5. Paste it into `.env_sample` and rename it to `.env`.
 
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
+## Deployment to Cloudflare workers 
 
 Deployment is done using the Wrangler CLI.
 
 To build and deploy directly to production:
 
-```sh
-npm run deploy
+```
+npm i && npm run build && npx wrangler deploy
 ```
 
-To deploy a preview URL:
+- Upload Environment Variables for production same as `.env`
 
-```sh
-npx wrangler versions upload
 ```
-
-You can then promote a version to production after verification or roll it out progressively.
-
-```sh
-npx wrangler versions deploy
+npx wrangler secret put APP_KEY --env production
+npx wrangler secret put APP_SECRET --env production
+npx wrangler secret put REFRESH_TOKEN --env production
 ```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
 
 Built with ❤️ using React Router.
+

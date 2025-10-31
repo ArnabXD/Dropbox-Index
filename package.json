@@ -1,37 +1,36 @@
 {
-  "name": "dropbox-index-rr",
+  "name": "react-router-cloudflare",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "react-router build",
     "cf-typegen": "wrangler types",
-    "deploy": "yarn run build && wrangler deploy",
-    "dev": "react-router dev",
-    "preview": "yarn run build && vite preview",
-    "typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
-    "lint": "biome lint",
-    "format": "biome format --write ."
+    "deploy": "npm run build && wrangler deploy",
+    "dev": "react-router dev --host",
+    "postinstall": "npm run cf-typegen",
+    "preview": "npm run build && vite preview",
+    "typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
   },
   "dependencies": {
-    "isbot": "^5.1.17",
-    "ky": "^1.8.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router": "^7.5.0"
+    "@tanstack/react-query": "^5.90.3",
+    "isbot": "^5.1.31",
+    "ky": "^1.11.0",
+    "lucide-react": "^0.545.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router": "^7.9.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@cloudflare/vite-plugin": "^1.0.0",
-    "@react-router/dev": "^7.5.0",
-    "@tailwindcss/vite": "^4.0.0",
-    "@types/node": "^20",
-    "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.1",
-    "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.2",
-    "vite": "^6.2.1",
+    "@cloudflare/vite-plugin": "^1.13.7",
+    "@react-router/dev": "^7.9.2",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^22",
+    "@types/react": "^19.1.15",
+    "@types/react-dom": "^19.1.9",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^4.10.0"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "wrangler": "^4.40.2"
+  }
 }
