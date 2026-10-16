@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
     plugins: lazyPlugins(() => [
       devServer({
         entry: "src/index.ts",
+        // The defaults hand any *.md/*.ts/*.js/*.css URL to Vite, which 404s Dropbox files
+        // like /api/raw/README.md. Only Vite internals and top-level public/ files skip Hono.
+        exclude: [/^\/@/, /^\/node_modules\//, /^\/\.vite\//, /\?t=\d+$/, /^\/[^/]+\.(css|svg)$/],
         // The page is server-rendered and public/ isn't in Vite's module graph:
         // reload the browser on any change under src/ or public/
         handleHotUpdate: ({ server, file }) => {
