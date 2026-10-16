@@ -2,6 +2,11 @@
 declare const Alpine: {
   data<T>(name: string, fn: () => T & ThisType<T & { $refs: Record<string, HTMLElement> }>): void;
 };
+declare const marked: { parse(md: string): string };
+declare const DOMPurify: {
+  sanitize(html: string): string;
+  addHook(hook: "afterSanitizeAttributes", fn: (node: Element) => void): void;
+};
 
 type Entry = { name: string; path: string; folder: boolean; size?: number; modified?: string };
 type SortKey = "name" | "size" | "modified";
@@ -10,8 +15,16 @@ export function client() {
   const KINDS: Record<string, string> = {
     image: "jpg jpeg png gif webp avif svg bmp ico",
     media: "mp4 webm mov m4v ogv mkv mp3 wav ogg oga m4a flac aac opus",
+    markdown: "md markdown",
+    text: "txt log csv tsv json yml yaml toml ini xml sh py js ts css html sql",
   };
-  const ICONS: Record<string, string> = { image: "🖼️", media: "🎞️" };
+  const ICONS: Record<string, string> = {
+    image: "image",
+    media: "film",
+    markdown: "file-text",
+    text: "file-code",
+  };
+  const TEXT_LIMIT = 2 ** 20; // larger text files download instead of previewing
   const kind = (name: string) =>
     Object.keys(KINDS).find((k) =>
       KINDS[k].split(" ").includes(name.split(".").pop()!.toLowerCase()),
@@ -22,6 +35,39 @@ export function client() {
       ? a.localeCompare(b, undefined, { numeric: true })
       : Number(a > b) - Number(a < b);
   const cache = new Map<string, Entry[]>();
+  // Dropbox errors arrive as JSON with an error_summary; fall back to the raw body
+  const fail = async (r: Response) => {
+    const body = await r.text();
+    try {
+      return new Error(JSON.parse(body).error_summary ?? body);
+    } catch {
+      return new Error(body);
+    }
+  };
+
+  // marked + DOMPurify load on first markdown preview; relative <img> resolve against the file's folder
+  const script = (src: string) =>
+    new Promise((onload, onerror) =>
+      document.head.append(
+        Object.assign(document.createElement("script"), { src, onload, onerror }),
+      ),
+    );
+  let libs: Promise<unknown> | undefined;
+  let base = "";
+  const markdown = async (md: string, dir: string) => {
+    libs ??= Promise.all([
+      script("https://cdn.jsdelivr.net/npm/marked@16.4.1/lib/marked.umd.js"),
+      script("https://cdn.jsdelivr.net/npm/dompurify@3.3.0/dist/purify.min.js"),
+    ]).then(() =>
+      DOMPurify.addHook("afterSanitizeAttributes", (n) => {
+        const src = n.tagName === "IMG" && n.getAttribute("src");
+        if (src) n.setAttribute("src", new URL(src, base).href);
+      }),
+    );
+    await libs;
+    base = location.origin + "/api/dl" + enc(dir) + "/";
+    return DOMPurify.sanitize(marked.parse(md));
+  };
 
   document.addEventListener("alpine:init", () =>
     Alpine.data("app", () => ({
@@ -35,6 +81,8 @@ export function client() {
       loading: false,
       error: "",
       view: null as Entry | null,
+      text: null as string | null,
+      viewError: "",
       toast: "",
       timer: 0,
       kind,
@@ -44,6 +92,28 @@ export function client() {
       get crumbs() {
         const parts = this.path.split("/").filter(Boolean);
         return parts.map((name, i) => ({ name, href: enc("/" + parts.slice(0, i + 1).join("/")) }));
+      },
+      get empty() {
+        if (this.loading || this.shown.length) return null;
+        if (this.error)
+          return {
+            icon: "triangle-alert",
+            title: this.error.includes("not_found") ? "This folder doesn't exist" : "Couldn't load",
+            hint: this.error,
+          };
+        if (this.searching)
+          return {
+            icon: "search-x",
+            title: "No results for “" + this.searching + "”",
+            hint: "Esc to go back",
+          };
+        if (this.entries.length)
+          return {
+            icon: "search-x",
+            title: "No matches for “" + this.q + "” here",
+            hint: "Enter searches all files",
+          };
+        return { icon: "folder-open", title: "This folder is empty", hint: "" };
       },
       get shown() {
         const q = this.searching ? "" : this.q.toLowerCase();
@@ -71,7 +141,7 @@ export function client() {
         try {
           if (!cache.has(url)) {
             const r = await fetch(url);
-            if (!r.ok) throw new Error(await r.text());
+            if (!r.ok) throw await fail(r);
             cache.set(url, await r.json());
           }
           if (this.url === url) this.entries = cache.get(url)!;
@@ -84,19 +154,41 @@ export function client() {
         if (ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
         ev.preventDefault();
         if (e.folder) return void this.go(enc(e.path));
-        if (!kind(e.name)) return void (location.href = this.dl(e));
+        if (!this.previewable(e)) return void (location.href = this.dl(e));
+        void this.preview(e);
+      },
+      previewable(e: Entry) {
+        const k = kind(e.name);
+        return !!k && (k === "image" || k === "media" || (e.size ?? 0) <= TEXT_LIMIT);
+      },
+      async preview(e: Entry) {
         this.view = e;
-        (this.$refs.dialog as HTMLDialogElement).showModal();
+        this.text = null;
+        this.viewError = "";
+        const dialog = this.$refs.dialog as HTMLDialogElement;
+        if (!dialog.open) dialog.showModal();
+        const k = kind(e.name);
+        if (k !== "markdown" && k !== "text") return;
+        try {
+          const r = await fetch("/api/raw" + enc(e.path));
+          if (!r.ok) throw await fail(r);
+          const t = await r.text();
+          const out =
+            k === "text" ? t : await markdown(t, e.path.slice(0, e.path.lastIndexOf("/")));
+          if (this.view === e) this.text = out;
+        } catch (err) {
+          if (this.view === e) this.viewError = (err as Error).message ?? "Couldn't load";
+        }
       },
       step(d: number) {
-        const list = this.shown.filter((e) => kind(e.name));
-        this.view = list[(list.indexOf(this.view!) + d + list.length) % list.length];
+        const list = this.shown.filter((e) => this.previewable(e));
+        void this.preview(list[(list.indexOf(this.view!) + d + list.length) % list.length]);
       },
       dl: (e: Entry) => "/api/dl" + enc(e.path),
       href(e: Entry) {
         return e.folder ? enc(e.path) : this.dl(e);
       },
-      icon: (e: Entry) => (e.folder ? "📁" : (ICONS[kind(e.name) ?? ""] ?? "📄")),
+      icon: (e: Entry) => (e.folder ? "folder" : (ICONS[kind(e.name) ?? ""] ?? "file")),
       async copy(e: Entry) {
         await navigator.clipboard.writeText(location.origin + this.href(e));
         this.toast = "Link copied";
@@ -106,9 +198,6 @@ export function client() {
       sortBy(k: SortKey) {
         this.asc = this.sort !== k || !this.asc;
         this.sort = k;
-      },
-      arrow(k: SortKey) {
-        return this.sort === k ? (this.asc ? " ↑" : " ↓") : "";
       },
       size(b = 0) {
         let i = 0;
