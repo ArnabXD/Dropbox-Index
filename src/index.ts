@@ -82,10 +82,22 @@ app.get("/api/search", async (c) => {
   );
 });
 
-// Stable share link: redirects to a fresh 4h temporary link on every hit
-app.get("/api/dl/*", async (c) => {
-  const path = decodeURIComponent(new URL(c.req.url).pathname.slice("/api/dl".length));
-  return c.redirect((await dbx(c, "files/get_temporary_link", { path })).link);
+// File path after the /api/<route> prefix -> fresh 4h temporary link
+const tempLink = async (c: Context): Promise<string> => {
+  const path = decodeURIComponent(new URL(c.req.url).pathname.replace(/^\/api\/\w+/, ""));
+  return (await dbx(c, "files/get_temporary_link", { path })).link;
+};
+
+// Stable share link
+app.get("/api/dl/*", async (c) => c.redirect(await tempLink(c)));
+
+// Same-origin file contents for the text/markdown viewer, always as inert plain text
+app.get("/api/raw/*", async (c) => {
+  const r = await fetch(await tempLink(c));
+  return new Response(r.body, {
+    status: r.status,
+    headers: { "Content-Type": "text/plain; charset=utf-8", "X-Content-Type-Options": "nosniff" },
+  });
 });
 
 // One-time helper: visit /api/auth to get a refresh token for REFRESH_TOKEN
