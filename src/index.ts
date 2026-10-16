@@ -1,10 +1,16 @@
 import { Hono, type Context } from "hono";
 import { env } from "hono/adapter";
+import { cache } from "hono/cache";
 import { HTTPException } from "hono/http-exception";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { page } from "./page.tsx";
 
-type Env = { APP_ID: string; APP_SECRET: string; REFRESH_TOKEN: string; TITLE?: string };
+type Env = {
+  APP_ID: string;
+  APP_SECRET: string;
+  REFRESH_TOKEN: string;
+  TITLE?: string;
+};
 type Meta = {
   ".tag": string;
   name: string;
@@ -13,8 +19,13 @@ type Meta = {
   client_modified?: string;
 };
 
-// Per-instance token cache: each Worker isolate / serverless instance refreshes once per ~4h
-let token = { value: "", exp: 0 };
+type Token = { value: string; exp: number };
+
+// Access token (~4h) cached in memory per instance, plus the Cache API where it exists
+// (Workers on a custom domain: shared by every isolate in a data center). Concurrent
+// requests share one in-flight refresh, so a cold instance refreshes at most once.
+let token: Token = { value: "", exp: 0 };
+let pending: Promise<Token> | undefined;
 
 const call = async (path: string, init: RequestInit) => {
   const r = await fetch("https://api.dropboxapi.com" + path, { method: "POST", ...init });
@@ -29,16 +40,39 @@ const oauth = (c: Context, params: Record<string, string>) => {
   });
 };
 
-const dbx = async (c: Context, endpoint: string, body: object) => {
-  if (Date.now() > token.exp) {
-    const t = await oauth(c, {
-      grant_type: "refresh_token",
-      refresh_token: env<Env>(c).REFRESH_TOKEN,
-    });
-    token = { value: t.access_token, exp: Date.now() + (t.expires_in - 60) * 1000 };
+const refresh = async (c: Context): Promise<Token> => {
+  const key = new URL("/.cache/dropbox-token", c.req.url).href;
+  const store = globalThis.caches && (await caches.open("dropbox-token"));
+  const hit = await store?.match(key);
+  if (hit) {
+    const t: Token = await hit.json();
+    if (Date.now() < t.exp) return t;
   }
+  const r = await oauth(c, {
+    grant_type: "refresh_token",
+    refresh_token: env<Env>(c).REFRESH_TOKEN,
+  });
+  const ttl = r.expires_in - 300; // retire 5 minutes early
+  const t = { value: r.access_token, exp: Date.now() + ttl * 1000 };
+  await store?.put(
+    key,
+    new Response(JSON.stringify(t), { headers: { "Cache-Control": "max-age=" + ttl } }),
+  );
+  return t;
+};
+
+const accessToken = async (c: Context) => {
+  if (Date.now() >= token.exp) {
+    pending ??= refresh(c).finally(() => (pending = undefined));
+    token = await pending;
+  }
+  return token.value;
+};
+
+const dbx = async (c: Context, endpoint: string, body: object) => {
+  const auth = "Bearer " + (await accessToken(c));
   return call("/2/" + endpoint, {
-    headers: { Authorization: "Bearer " + token.value, "Content-Type": "application/json" },
+    headers: { Authorization: auth, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 };
@@ -61,9 +95,16 @@ const redirectUri = (c: Context) => {
   return (host.startsWith("localhost") ? "http://" : "https://") + host + "/api/auth/token";
 };
 
+// Dropbox responses for 60s: shared per data center on Workers, a no-op where `caches` is absent
+const cached = cache({
+  cacheName: "dropbox-index",
+  cacheControl: "public, max-age=60",
+  onCacheNotAvailable: false,
+});
+
 const app = new Hono();
 
-app.get("/api/list", async (c) => {
+app.get("/api/list", cached, async (c) => {
   let r = await dbx(c, "files/list_folder", { path: c.req.query("path") ?? "", limit: 2000 });
   const list: Meta[] = r.entries;
   while (r.has_more)
@@ -71,7 +112,7 @@ app.get("/api/list", async (c) => {
   return entries(c, list);
 });
 
-app.get("/api/search", async (c) => {
+app.get("/api/search", cached, async (c) => {
   const r = await dbx(c, "files/search_v2", {
     query: c.req.query("q") ?? "",
     options: { max_results: 1000 },
@@ -92,7 +133,7 @@ const tempLink = async (c: Context): Promise<string> => {
 app.get("/api/dl/*", async (c) => c.redirect(await tempLink(c)));
 
 // Same-origin file contents for the text/markdown viewer, always as inert plain text
-app.get("/api/raw/*", async (c) => {
+app.get("/api/raw/*", cached, async (c) => {
   const r = await fetch(await tempLink(c));
   return new Response(r.body, {
     status: r.status,
