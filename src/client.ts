@@ -84,6 +84,7 @@ export function client() {
       text: null as string | null,
       viewError: "",
       readme: "",
+      readmeLoading: false,
       toast: "",
       timer: 0,
       kind,
@@ -161,11 +162,17 @@ export function client() {
             (e) =>
               !e.folder && /^readme\.(md|markdown)$/i.test(e.name) && (e.size ?? 0) <= TEXT_LIMIT,
           );
+        this.readmeLoading = !!f;
         if (!f) return;
-        const r = await fetch("/api/raw" + enc(f.path));
-        if (!r.ok) return;
-        const html = await markdown(await r.text(), this.path);
-        if (this.url === url) this.readme = html;
+        try {
+          const r = await fetch("/api/raw" + enc(f.path));
+          const html = r.ok ? await markdown(await r.text(), this.path) : "";
+          if (this.url === url) this.readme = html;
+        } catch {
+          // README is a nice-to-have: on failure the card just disappears
+        } finally {
+          if (this.url === url) this.readmeLoading = false;
+        }
       },
       open(e: Entry, ev: MouseEvent) {
         if (ev.metaKey || ev.ctrlKey || ev.shiftKey) return;

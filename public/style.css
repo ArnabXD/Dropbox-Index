@@ -579,3 +579,43 @@ output .i {
 .readme .md {
   padding: 20px 28px 28px;
 }
+.skeleton {
+  display: grid;
+  gap: 12px;
+  padding: 24px 28px 28px;
+}
+.skeleton span {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--hover) 25%, var(--line) 50%, var(--hover) 75%) 0 0 / 200%
+    100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+.skeleton span:nth-child(1) {
+  width: 40%;
+  height: 20px;
+  margin-bottom: 8px;
+}
+.skeleton span:nth-child(3) {
+  width: 92%;
+}
+.skeleton span:nth-child(4) {
+  width: 80%;
+}
+.skeleton span:nth-child(5) {
+  width: 55%;
+}
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton span,
+  .loader {
+    animation: none;
+  }
+}

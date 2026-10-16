@@ -182,11 +182,18 @@ const Page = ({ title }: { title: string }) => (
             </div>
           </template>
         </section>
-        <section class="card readme" x-cloak="" x-show="readme">
+        <section class="card readme" x-cloak="" x-show="readme || readmeLoading">
           <h2>
             <Icon name="file-text" /> README
           </h2>
-          <article class="md" x-html="readme" />
+          <div class="skeleton" x-show="readmeLoading" aria-busy="true" aria-label="Loading README">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <article class="md" x-show="!readmeLoading" x-html="readme" />
         </section>
       </main>
       <Preview />
