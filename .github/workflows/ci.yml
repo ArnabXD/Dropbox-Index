@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches-ignore: ["gh-pages"]
+    tags: ["*"]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '#skip-build')"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: voidzero-dev/setup-vp@v1.21.2
+        with:
+          node-version: "22"
+          cache: true
+      - run: vp install
+      - run: vp check
