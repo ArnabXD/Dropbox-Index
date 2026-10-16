@@ -146,6 +146,9 @@ app.get("/api/raw/*", cached, async (c) => {
   });
 });
 
+// setup-only: gone once REFRESH_TOKEN is configured
+app.use("/api/auth/*", async (c, next) => (env<Env>(c).REFRESH_TOKEN ? c.notFound() : next()));
+
 app.get("/api/auth", (c) =>
   c.redirect(
     "https://www.dropbox.com/oauth2/authorize?" +

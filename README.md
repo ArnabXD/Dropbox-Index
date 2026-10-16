@@ -53,7 +53,7 @@ pnpm dev
 2. Copy `refresh_token` from the JSON shown and set it as `REFRESH_TOKEN` in `.env`.
 3. Restart `pnpm dev` and open <http://localhost:5173>.
 
-The refresh token doesn't expire and works on every deployment, so you only do this once.
+The refresh token doesn't expire and works on every deployment, so you only do this once. While `REFRESH_TOKEN` is set, `/api/auth` returns 404; unset it to get a new one.
 
 ## Configuration
 
@@ -103,7 +103,7 @@ PORT=3000 pnpm start
 | ------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | Dropbox says **invalid redirect_uri** | Add the exact `…/api/auth/token` URL to the app's Redirect URIs. Use `localhost`, not `127.0.0.1`. |
 | `invalid_client` error                | `APP_ID` / `APP_SECRET` are wrong or swapped.                                                      |
-| `missing_scope` error                 | Enable the permissions from step 1, then get a **new** refresh token (step 3).                     |
+| `missing_scope` error                 | Enable the permissions from step 1, then unset `REFRESH_TOKEN` and get a new one (step 3).         |
 | Folder shows `path/not_found`         | With an App folder app, paths start inside `Apps/<app name>/`.                                     |
 | Empty listing                         | The App folder has no files yet.                                                                   |
 
