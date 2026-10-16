@@ -2,17 +2,14 @@ import devServer from "@hono/vite-dev-server";
 import { defineConfig, loadEnv, lazyPlugins } from "vite-plus";
 
 export default defineConfig(({ mode }) => {
-  // Same process.env the Node runtime sees; hono/adapter's env(c) reads it
+  // .env -> process.env for env(c)
   Object.assign(process.env, loadEnv(mode, process.cwd(), ""));
   return {
     plugins: lazyPlugins(() => [
       devServer({
         entry: "src/index.ts",
-        // The defaults hand any *.md/*.ts/*.js/*.css URL to Vite, which 404s Dropbox files
-        // like /api/raw/README.md. Only Vite internals and top-level public/ files skip Hono.
+        // defaults send /api/raw/*.md etc. to Vite (404)
         exclude: [/^\/@/, /^\/node_modules\//, /^\/\.vite\//, /\?t=\d+$/, /^\/[^/]+\.(css|svg)$/],
-        // The page is server-rendered and public/ isn't in Vite's module graph:
-        // reload the browser on any change under src/ or public/
         handleHotUpdate: ({ server, file }) => {
           if (!/\/(src|public)\//.test(file)) return;
           server.hot.send({ type: "full-reload" });
@@ -20,7 +17,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
     ]),
-    // Node bundle (page.tsx needs a JSX transform); Workers and Vercel bundle src/index.ts themselves
+    // Node only; Workers and Vercel bundle src/index.ts
     build: { ssr: "src/node.ts" },
     staged: {
       "*": "vp check --fix",

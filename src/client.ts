@@ -1,4 +1,4 @@
-// Browser code, inlined into the page via client.toString(): it must not reference anything outside itself.
+// Inlined via toString(): must not reference anything outside client().
 declare const Alpine: {
   data<T>(name: string, fn: () => T & ThisType<T & { $refs: Record<string, HTMLElement> }>): void;
 };
@@ -24,7 +24,7 @@ export function client() {
     markdown: "file-text",
     text: "file-code",
   };
-  const TEXT_LIMIT = 2 ** 20; // larger text files download instead of previewing
+  const TEXT_LIMIT = 2 ** 20;
   const kind = (name: string) =>
     Object.keys(KINDS).find((k) =>
       KINDS[k].split(" ").includes(name.split(".").pop()!.toLowerCase()),
@@ -35,7 +35,6 @@ export function client() {
       ? a.localeCompare(b, undefined, { numeric: true })
       : Number(a > b) - Number(a < b);
   const cache = new Map<string, Entry[]>();
-  // Dropbox errors arrive as JSON with an error_summary; fall back to the raw body
   const fail = async (r: Response) => {
     const body = await r.text();
     try {
@@ -45,7 +44,6 @@ export function client() {
     }
   };
 
-  // marked + DOMPurify load on first markdown preview; relative <img> resolve against the file's folder
   const script = (src: string) =>
     new Promise((onload, onerror) =>
       document.head.append(
@@ -153,7 +151,6 @@ export function client() {
         if (this.url === url) this.loading = false;
         await this.loadReadme(url);
       },
-      // Render the folder's README.md under the listing (not for search results)
       async loadReadme(url: string) {
         this.readme = "";
         const f =
@@ -169,7 +166,7 @@ export function client() {
           const html = r.ok ? await markdown(await r.text(), this.path) : "";
           if (this.url === url) this.readme = html;
         } catch {
-          // README is a nice-to-have: on failure the card just disappears
+          // optional, hide on failure
         } finally {
           if (this.url === url) this.readmeLoading = false;
         }

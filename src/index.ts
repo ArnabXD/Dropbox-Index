@@ -24,9 +24,7 @@ type Meta = {
 
 type Token = { value: string; exp: number };
 
-// Access token (~4h) cached in memory per instance, plus the Cache API where it exists
-// (Workers on a custom domain: shared by every isolate in a data center). Concurrent
-// requests share one in-flight refresh, so a cold instance refreshes at most once.
+// Per instance, plus the Cache API where present; one in-flight refresh at a time
 let token: Token = { value: "", exp: 0 };
 let pending: Promise<Token> | undefined;
 
@@ -55,7 +53,7 @@ const refresh = async (c: Context): Promise<Token> => {
     grant_type: "refresh_token",
     refresh_token: env<Env>(c).REFRESH_TOKEN,
   });
-  const ttl = r.expires_in - 300; // retire 5 minutes early
+  const ttl = r.expires_in - 300;
   const t = { value: r.access_token, exp: Date.now() + ttl * 1000 };
   await store?.put(
     key,
@@ -98,7 +96,7 @@ const redirectUri = (c: Context) => {
   return (host.startsWith("localhost") ? "http://" : "https://") + host + "/api/auth/token";
 };
 
-// Dropbox responses for 60s: shared per data center on Workers, a no-op where `caches` is absent
+// no-op without the Cache API (Node)
 const cached = cache({
   cacheName: "dropbox-index",
   cacheControl: "public, max-age=60",
@@ -107,7 +105,6 @@ const cached = cache({
 
 const app = new Hono();
 
-// Optional: AUTH_USER + AUTH_PASS put the whole index behind HTTP Basic auth
 app.use(async (c, next) => {
   const { AUTH_USER, AUTH_PASS } = env<Env>(c);
   if (!AUTH_USER || !AUTH_PASS) return next();
@@ -133,16 +130,14 @@ app.get("/api/search", cached, async (c) => {
   );
 });
 
-// File path after the /api/<route> prefix -> fresh 4h temporary link
 const tempLink = async (c: Context): Promise<string> => {
   const path = decodeURIComponent(new URL(c.req.url).pathname.replace(/^\/api\/\w+/, ""));
   return (await dbx(c, "files/get_temporary_link", { path })).link;
 };
 
-// Stable share link
 app.get("/api/dl/*", async (c) => c.redirect(await tempLink(c)));
 
-// Same-origin file contents for the text/markdown viewer, always as inert plain text
+// text/plain so HTML files never execute
 app.get("/api/raw/*", cached, async (c) => {
   const r = await fetch(await tempLink(c));
   return new Response(r.body, {
@@ -151,7 +146,6 @@ app.get("/api/raw/*", cached, async (c) => {
   });
 });
 
-// One-time helper: visit /api/auth to get a refresh token for REFRESH_TOKEN
 app.get("/api/auth", (c) =>
   c.redirect(
     "https://www.dropbox.com/oauth2/authorize?" +

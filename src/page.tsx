@@ -1,12 +1,11 @@
 import { html } from "hono/html";
 import { client } from "./client.ts";
 
-// Alpine directives with modifiers (@click.prevent, :href) aren't valid JSX attribute names
+// @click.prevent / :href aren't valid JSX attribute names
 const on = (event: string, js: string) => ({ ["@" + event]: js });
 const bind = (attr: string, js: string) => ({ [":" + attr]: js });
 const go = (to: string) => on("click.prevent", "go(" + to + ")");
 
-// Sprite icon from public/icons.svg; `dyn` is an Alpine expression yielding the icon name
 const Icon = ({
   name,
   dyn,
