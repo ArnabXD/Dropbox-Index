@@ -38,7 +38,7 @@ Requires [Node.js](https://nodejs.org) 22.18+ and [pnpm](https://pnpm.io).
 git clone https://github.com/ArnabXD/Dropbox-Index.git
 cd Dropbox-Index
 pnpm install
-cp .env.sample .env
+cp .env.example .env
 ```
 
 Fill in `APP_ID` and `APP_SECRET` in `.env`, then:
@@ -70,18 +70,18 @@ The refresh token doesn't expire and works on every deployment, so you only do t
 
 Set the variables above as secrets or environment variables on your host.
 
-### Cloudflare Workers
+### Cloudflare Workers (recommended)
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ArnabXD/Dropbox-Index)
+
+The button forks the repo to your GitHub, asks for `APP_ID`, `APP_SECRET` and `REFRESH_TOKEN`, and deploys. Every push to your fork redeploys. Add a [custom domain](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) to enable edge caching.
+
+Or from your machine:
 
 ```sh
 pnpm dlx wrangler deploy
-pnpm dlx wrangler secret put APP_ID   # repeat for APP_SECRET, REFRESH_TOKEN and optionally TITLE
+pnpm dlx wrangler secret put APP_ID   # repeat for APP_SECRET, REFRESH_TOKEN, and optional TITLE / AUTH_*
 ```
-
-### Render
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
-
-Uses `render.yaml`. Fill in the variables when prompted.
 
 ### Vercel
 

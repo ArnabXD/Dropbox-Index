@@ -2,7 +2,7 @@ import devServer from "@hono/vite-dev-server";
 import { defineConfig, loadEnv, lazyPlugins } from "vite-plus";
 
 export default defineConfig(({ mode }) => {
-  // Same process.env the Node/Render runtime sees; hono/adapter's env(c) reads it
+  // Same process.env the Node runtime sees; hono/adapter's env(c) reads it
   Object.assign(process.env, loadEnv(mode, process.cwd(), ""));
   return {
     plugins: lazyPlugins(() => [
@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
     ]),
-    // Node/Render bundle (page.tsx needs a JSX transform); Workers and Vercel bundle src/index.ts themselves
+    // Node bundle (page.tsx needs a JSX transform); Workers and Vercel bundle src/index.ts themselves
     build: { ssr: "src/node.ts" },
     staged: {
       "*": "vp check --fix",

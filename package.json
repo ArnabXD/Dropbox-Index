@@ -19,5 +19,18 @@
   "engines": {
     "node": ">=22.18"
   },
-  "packageManager": "pnpm@12.14.0"
+  "packageManager": "pnpm@12.14.0",
+  "cloudflare": {
+    "bindings": {
+      "APP_ID": {
+        "description": "Dropbox **App key** from the [Dropbox App Console](https://www.dropbox.com/developers/apps)"
+      },
+      "APP_SECRET": {
+        "description": "Dropbox **App secret** from the same app"
+      },
+      "REFRESH_TOKEN": {
+        "description": "Run the app locally and open `/api/auth` once to get it, see the [README](https://github.com/ArnabXD/Dropbox-Index#3-get-the-refresh-token)"
+      }
+    }
+  }
 }
