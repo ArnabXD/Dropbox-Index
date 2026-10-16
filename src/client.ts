@@ -83,6 +83,7 @@ export function client() {
       view: null as Entry | null,
       text: null as string | null,
       viewError: "",
+      readme: "",
       toast: "",
       timer: 0,
       kind,
@@ -149,6 +150,22 @@ export function client() {
           if (this.url === url) [this.entries, this.error] = [[], (e as Error).message];
         }
         if (this.url === url) this.loading = false;
+        await this.loadReadme(url);
+      },
+      // Render the folder's README.md under the listing (not for search results)
+      async loadReadme(url: string) {
+        this.readme = "";
+        const f =
+          !this.searching &&
+          this.entries.find(
+            (e) =>
+              !e.folder && /^readme\.(md|markdown)$/i.test(e.name) && (e.size ?? 0) <= TEXT_LIMIT,
+          );
+        if (!f) return;
+        const r = await fetch("/api/raw" + enc(f.path));
+        if (!r.ok) return;
+        const html = await markdown(await r.text(), this.path);
+        if (this.url === url) this.readme = html;
       },
       open(e: Entry, ev: MouseEvent) {
         if (ev.metaKey || ev.ctrlKey || ev.shiftKey) return;

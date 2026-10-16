@@ -182,6 +182,12 @@ const Page = ({ title }: { title: string }) => (
             </div>
           </template>
         </section>
+        <section class="card readme" x-cloak="" x-show="readme">
+          <h2>
+            <Icon name="file-text" /> README
+          </h2>
+          <article class="md" x-html="readme" />
+        </section>
       </main>
       <Preview />
       <output x-cloak="" x-show="toast" x-transition="">

@@ -560,3 +560,22 @@ output {
 output .i {
   color: #22c55e;
 }
+
+/* Folder README */
+.readme {
+  margin-top: 16px;
+}
+.readme h2 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.readme .md {
+  padding: 20px 28px 28px;
+}
