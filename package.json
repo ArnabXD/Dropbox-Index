@@ -1,32 +1,36 @@
 {
   "name": "dropbox-index",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vp dev",
+    "start": "node dist/node.js",
+    "prepare": "vp config"
   },
   "dependencies": {
-    "@chakra-ui/hooks": "2.0.4",
-    "@heroicons/react": "1.0.6",
-    "dropbox": "10.32.0",
-    "ky": "0.31.1",
-    "next": "12.2.2",
-    "pretty-bytes": "6.0.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-hot-toast": "2.3.0",
-    "react-query": "3.39.2"
+    "@hono/node-server": "2.1.5",
+    "hono": "4.13.13"
   },
   "devDependencies": {
-    "@types/node": "16.11.43",
-    "@types/react": "17.0.45",
-    "autoprefixer": "10.4.8",
-    "eslint": "8.22.0",
-    "eslint-config-next": "12.2.2",
-    "postcss": "8.4.14",
-    "tailwindcss": "3.1.7",
-    "typescript": "4.7.4"
+    "@hono/vite-dev-server": "0.26.1",
+    "@types/node": "22.20.5",
+    "vite-plus": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "packageManager": "pnpm@12.14.0",
+  "cloudflare": {
+    "bindings": {
+      "APP_ID": {
+        "description": "Dropbox **App key** from the [Dropbox App Console](https://www.dropbox.com/developers/apps)"
+      },
+      "APP_SECRET": {
+        "description": "Dropbox **App secret** from the same app"
+      },
+      "REFRESH_TOKEN": {
+        "description": "Run the app locally and open `/api/auth` once to get it, see the [README](https://github.com/ArnabXD/Dropbox-Index#3-get-the-refresh-token)"
+      }
+    }
   }
 }

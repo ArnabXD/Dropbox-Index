@@ -1,0 +1,7 @@
+name = "dropbox-index"
+main = "src/index.ts"
+compatibility_date = "2025-10-01"
+keep_names = false
+
+[assets]
+directory = "public"
