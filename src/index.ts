@@ -1,5 +1,6 @@
 import { Hono, type Context } from "hono";
 import { env } from "hono/adapter";
+import { basicAuth } from "hono/basic-auth";
 import { cache } from "hono/cache";
 import { HTTPException } from "hono/http-exception";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
@@ -10,6 +11,8 @@ type Env = {
   APP_SECRET: string;
   REFRESH_TOKEN: string;
   TITLE?: string;
+  AUTH_USER?: string;
+  AUTH_PASS?: string;
 };
 type Meta = {
   ".tag": string;
@@ -103,6 +106,13 @@ const cached = cache({
 });
 
 const app = new Hono();
+
+// Optional: AUTH_USER + AUTH_PASS put the whole index behind HTTP Basic auth
+app.use(async (c, next) => {
+  const { AUTH_USER, AUTH_PASS } = env<Env>(c);
+  if (!AUTH_USER || !AUTH_PASS) return next();
+  return basicAuth({ username: AUTH_USER, password: AUTH_PASS })(c, next);
+});
 
 app.get("/api/list", cached, async (c) => {
   let r = await dbx(c, "files/list_folder", { path: c.req.query("path") ?? "", limit: 2000 });
